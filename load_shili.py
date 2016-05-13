@@ -6,7 +6,7 @@ import os
 import re
 import sys
 sys.path.append('..')
-import module.resources as resources
+from module import resources
 
 def get_shili_list(path):
     """

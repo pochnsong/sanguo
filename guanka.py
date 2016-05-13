@@ -1,16 +1,21 @@
-#!/usr/bin/env python
-#coding=utf8
+# coding=utf-8
+from __future__ import unicode_literals
 import pygame
 import os
 import sys
-sys.path.append('..')
+reload(sys)
+sys.setdefaultencoding('utf-8')
 from easy_pygame.EVENT import *
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(BASE_DIR)
 
 class GuanKa:
     def __init__(self):
         self.logoW,self.logoH=400,200
-        self.guanka=self.get_guanka('../数据')
+        self.guanka=self.get_guanka(os.path.join(BASE_DIR, "数据"))
         print len(self.guanka)
+
     def get_guanka(self,path):
         ''' 获取 关卡信息 '''
         res={}
@@ -19,13 +24,21 @@ class GuanKa:
             fname=path+os.sep+ff
             if os.path.isdir(fname):
                 try:
-                    img=pygame.image.load(fname+'/'+ff+'.png').convert()
-                    img=pygame.transform.scale(img, (self.logoW,self.logoH))
-                except:
+                    thumb =os.path.join(fname, '%s.png'%ff)
+                    with open(thumb,  'rb') as rf:
+                        img=pygame.image.load(rf).convert()
+                        img=pygame.transform.scale(img, (self.logoW,self.logoH))
+                        rf.close()
+
+                except Exception, e:
+                    print e
                     img=pygame.Surface((400,200))
                     img.fill((255,255,255))
-                font=pygame.font.Font('../wqy-zenhei.ttc',24)
-                sss=font.render(unicode(ff,'utf8'),True,(0,255,0))
+
+                #print  BASE_DIR, type(BASE_DIR)
+                #print 'font', os.path.join(BASE_DIR, 'wqy-zenhei.ttc')
+                font=pygame.font.Font('wqy-zenhei.ttc',24)
+                sss=font.render(ff,True,(0,255,0))
                 img.blit(sss,((self.logoW-sss.get_width())/2,self.logoH-sss.get_height()))
 
                 res[ff]=img
@@ -67,7 +80,6 @@ def run(screen):
                 print name_guanka
                 #确定关卡
                 if name_guanka!=None:
-                    sys.path.append('../选择势力')
                     import shili
                     shili.run(screen,name_guanka)
 
@@ -94,7 +106,7 @@ def run(screen):
 
 if __name__ =='__main__':
     pygame.init()
-    screen = pygame.display.set_mode((800, 560), 0, 32)
+    screen = pygame.display.set_mode((1028, 560), 0, 32)
     pygame.display.set_caption("JJDL.三国")
     run(screen)
     

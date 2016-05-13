@@ -3,15 +3,15 @@
 管理游戏数据
 model
 '''
+from __future__ import unicode_literals
 import re
-import sys
-sys.path.append('..')
+import os
 import module.resources as resources
 import module.graph as graph
 import easy_pygame
 import pygame
 import random
-GAME_PATH='../'
+GAME_PATH=os.path.dirname(os.path.abspath(__file__))
 
 #-------------------------------------------------------------
 class SGDATA:
@@ -95,19 +95,19 @@ class SGDATA:
     
     def __init__(self,guanka):
         self.guanka=guanka
-        PATH=GAME_PATH+'数据/'+guanka+'/'
-        self.info_chengchi=resources.load_dict_2(PATH+'城池信息')
-        self.map_chengchi=resources.load_dict_0(PATH+'城池.地图',pyeval=[True])
-        self.info_wujiang=resources.load_dict_2(PATH+'武将/武将')
+        PATH=os.path.join(GAME_PATH,'数据',guanka)
+        self.info_chengchi=resources.load_dict_2(os.path.join(PATH,'城池信息'))
+        self.map_chengchi=resources.load_dict_0(os.path.join(PATH,'城池.地图'),pyeval=[True])
+        self.info_wujiang=resources.load_dict_2(os.path.join(PATH,'武将','武将'))
         self.load_img_wujiang(PATH)
-        self.map_daolu=self.load_map_daolu(PATH+'道路.地图')
-        self.shili=resources.load_dict_path(PATH+'势力信息',
+        self.map_daolu=self.load_map_daolu(os.path.join(PATH,'道路.地图'))
+        self.shili=resources.load_dict_path(os.path.join(PATH,'势力信息'),
                                             resources.load_dict_1,'.势力')
 
-        self.img_chengchi=resources.load_dict_path(PATH+'资源/城池',
+        self.img_chengchi=resources.load_dict_path(os.path.join(PATH,'资源/城池'),
                                                    self.fn_img_chengchi,'.png')
         #self.img_wujiang=self.load_img_wujiang(PATH)
-        self.img_map=easy_pygame.LoadImg(PATH+'资源/大地图.png')
+        self.img_map=easy_pygame.LoadImg(os.path.join(PATH,'资源','大地图.png'))
         #在城池信息中添加位置
         for pos in self.map_chengchi.keys():
             cc=self.map_chengchi[pos]
@@ -119,8 +119,8 @@ class SGDATA:
     def load_img_wujiang(self,path):
 
         for wj in self.info_wujiang.keys():
-            self.info_wujiang[wj]['大身像']=easy_pygame.LoadImg(path+'资源/大身像/'+wj+'.jpg')
-            self.info_wujiang[wj]['小头像']=easy_pygame.LoadImg(path+'资源/大身像/'+wj+'.jpg') 
+            self.info_wujiang[wj]['大身像']=easy_pygame.LoadImg(os.path.join(path,'资源','大身像','%s.jpg'%wj))
+            self.info_wujiang[wj]['小头像']=easy_pygame.LoadImg(os.path.join(path,'资源','小头像','%s.jpg'%wj))
         '''
         #大身像
         img_big=resources.load_dict_path(path+'资源/大身像',
@@ -159,7 +159,6 @@ class SGDatabase(SGDATA):
         ''' 数据初始化'''
         ''' 城池 '''
         for cc in self.info_chengchi.keys():
-
             self.info_chengchi[cc]['农业']=int(self.info_chengchi[cc]['农业资源']*0.1)
             self.info_chengchi[cc]['商业']=int(self.info_chengchi[cc]['商业资源']*0.1)
             self.info_chengchi[cc]['防灾']=random.randint(0,30)
@@ -213,14 +212,14 @@ class SGDatabase(SGDATA):
         ''' 获取世界 '''
         world=self.img_map.copy() #背景图片
         self.world_debug(world)
-        font=pygame.font.Font('../wqy-zenhei.ttc',24)
+        font=pygame.font.Font('wqy-zenhei.ttc',24)
         
         #画城池
         for pos in self.map_chengchi.keys():
             chengchi=self.map_chengchi[pos]
             x,y=pos
             world.blit(self.get_img_chengchi(chengchi), (x*100,y*100))
-            sss=font.render(unicode(chengchi,'utf8'), True, (0,0,0),(255,255,255))
+            sss=font.render(chengchi, True, (0,0,0),(255,255,255))
             world.blit(sss,(x*100,y*100))
             pass
 

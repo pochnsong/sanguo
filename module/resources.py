@@ -1,9 +1,10 @@
 #coding=utf8
+from __future__ import unicode_literals
 import os
 import re
 import pygame
 #-------------------------------------------------------------------
-def get_file_list(path,suffix=''):
+def get_filelist(path,suffix=''):
     '''
     获取文件列表
     '''
@@ -35,13 +36,15 @@ def get_file_list(path,suffix=''):
 #-------------------------------------------------------------------
 
 def load_image(src,default={'size':(240,240),'fill':(255,255,255)}):
-
+    src = os.path.abspath(src)
     try:
-        sf=pygame.image.load(src).convert_alpha()
+        with open(src, 'rb') as rf:
+            sf=pygame.image.load(rf).convert_alpha()
+            rf.close()
         sf=pygame.transform.smoothscale(sf,default['size'])
-
-    except:
-        print '无法打开',os.path.abspath(src)
+    except Exception, e:
+        print e
+        print '无法打开',src, type(src)
         sf=pygame.Surface(default['size'])
         sf.fill(default['fill'])
 
@@ -110,6 +113,8 @@ def load_dict_0(fname,pyeval=[False]):
     res={}
     checker=re.compile(r'^(?P<key>\S+)(\s+(?P<value>.*))?')
     for line in lines:
+        if isinstance(line, str):
+            line = line.decode('utf-8')
         line=line.strip()
         if line=='' or line[0]=='#':
             continue
@@ -149,10 +154,12 @@ def load_dict_2(fname):
     #print 'init.LoadInfo,',fname,res
     res={}
     lines=file(fname,'r').readlines()
-    keys=re.split(r'\s+',lines[0].strip())
-    _T=[str]*(len(keys)+1)
-
+    keys=re.split(r'\s+',lines[0].decode('utf-8').strip())
+    _T=[unicode]*(len(keys)+1)
     for line in lines[1:]:
+        if isinstance(line, str):
+            line = line.decode('utf-8')
+
         line=line.strip()
         if line=='' or line[0]=='#':
             continue
@@ -189,7 +196,7 @@ def load_dict_path(path,load_function,suffix=''):
     }
     '''
     res={}
-    flist=get_file_list(path,suffix)
+    flist=get_filelist(path,suffix)
     for ff in flist: #读取每个势力文件
 
         key=os.path.basename(ff).split('.')[0]

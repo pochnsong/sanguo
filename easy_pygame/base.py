@@ -1,8 +1,13 @@
 #coding=utf8
+from __future__ import unicode_literals
 import pygame
 
 def LoadImg(src):
-    return pygame.image.load(src).convert_alpha()
+    res = None
+    with open(src, 'rb') as rf:
+        res = pygame.image.load(rf).convert_alpha()
+        rf.close()
+    return res
 
 def Scale(surface,(width,height)):
     return pygame.transform.smoothscale(surface,(width,height))

@@ -1,43 +1,36 @@
-#!/usr/bin/env python
-#coding=utf8
+# coding=utf8
+from __future__ import unicode_literals
 
-'''
-
-'''
-
-import pygame
-from pygame.locals import *
-import os
 import math
 
+from pygame.locals import *
+
+import module.resources as resources
+from easy_pygame.EVENT import *
 from load_shili import *
 
-import sys
-sys.path.append('..')
-from easy_pygame.EVENT import *
-import module.resources as resources
 
 class ShiLi:
     ''' 选择势力 '''
     def __init__(self,guanka):
         '''guanka 关卡 '''
         self.guanka=guanka
-        self.logoW,self.logoH=800,500
+        self.logoW,self.logoH=1028,560
         #self.shili=get_shili_list('../数据/'+guanka+'/势力信息')        
-        self.shili=resources.load_dict_path('../数据/'+guanka+'/势力信息',
+        self.shili=resources.load_dict_path('数据/'+guanka+'/势力信息',
                                             resources.load_dict_1,
                                             suffix='.势力')        
 
     def get_imglist(self):
         """ [ (),(),()] """
         res=[]
-        font=pygame.font.Font('../wqy-zenhei.ttc',36)
+        font=pygame.font.Font('wqy-zenhei.ttc',36)
     
         for x in self.shili.keys():
             if x=='在野':
                 continue
-            img=resources.load_image('../数据/'+self.guanka+'/资源/大身像/'+x+'.jpg')
-            txt=font.render(unicode(x,'utf8'),True,(255,0,0))
+            img=resources.load_image('数据/'+self.guanka+'/资源/大身像/'+x+'.jpg')
+            txt=font.render(x,True,(255,0,0))
             img.blit(txt,((img.get_width()-txt.get_width())/2,img.get_height()-txt.get_height()))
             res.append((x,img,0))
 
@@ -57,7 +50,7 @@ def LuoXuan(screen,imgdict,pos=0,seleted=None):
         _k=_kk*o
         wujiang=pygame.transform.scale(wujiang, (k, k))
         x,y=po_to_xy(a*o/360.0,o/360.0)
-        x,y=int(x+400),(y+180)
+        x,y=int(x+519),(y+180)
         screen.blit(wujiang, (x, y))
         if seleted==name:
             pygame.draw.rect(screen,(0,255,0),Rect(x,y,k,k),2)
@@ -90,7 +83,7 @@ def select_wujiang(pos,screen,wujiangs,angle=0):
     for name,wujiang,wid in wujiangs:
         k=int(1.0/1080.0*o*50.0)
         x,y=po_to_xy(a*o/360.0,o/360.0)
-        x,y=int(x+400),(y+180)
+        x,y=int(x+519),(y+180)
         if mx>x and my>y and mx<x+k and my<y+k:
             res=name
         o=o+180.0
@@ -100,9 +93,9 @@ def select_wujiang(pos,screen,wujiangs,angle=0):
 
 class Menu:
     def __init__(self,screen):
-        self.backbt=pygame.image.load('../src/back.png').convert_alpha()
+        self.backbt=pygame.image.load('src/back.png').convert_alpha()
         self.backbt=pygame.transform.scale(self.backbt, (100, 100))
-        self.okbt=pygame.image.load('../src/ok.png').convert_alpha()
+        self.okbt=pygame.image.load('src/ok.png').convert_alpha()
         self.okbt=pygame.transform.scale(self.okbt, (100, 100))
         self.screen=screen
         self.ok=False
@@ -124,7 +117,7 @@ class Menu:
         return None
 
 def run(screen,guanka):
-    font=pygame.font.Font('../wqy-zenhei.ttc',24)
+    font=pygame.font.Font('wqy-zenhei.ttc',24)
     shili=ShiLi(guanka)
 
     wujiang_liebiao=shili.get_imglist()
@@ -158,9 +151,9 @@ def run(screen,guanka):
                 if bt=='后退':
                     return
                 if bt=='确定':
-                    sys.path.append('../主界面')
-                    import run
-                    run.run(screen,guanka,seleted)
+
+                    import celue
+                    celue.run(screen, guanka, seleted)
                 seleted=select_wujiang(event.pos,screen,wujiangs,angle=i)
                 if seleted!=None:
                     menu.set(True)
@@ -210,7 +203,7 @@ def run(screen,guanka):
         pygame.display.update()
 
 if __name__ =='__main__':
-    
+    """
     ss=[1,2,3,4,5]
     sl=looplist(ss,10,3,direction='+')
     rsl=looplist(ss,10,3,direction='-')
@@ -219,11 +212,13 @@ if __name__ =='__main__':
     print sl
     print rsl
     """
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
+
     pygame.init()
-    screen = pygame.display.set_mode((800, 560), 0, 32)
+    screen = pygame.display.set_mode((1028, 560), 0, 32)
     pygame.display.set_caption("JJDL.三国")
-    run(screen)
-    """
+    run(screen, "董卓弄权")
 
     
     

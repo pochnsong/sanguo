@@ -2,10 +2,9 @@
 import sys
 sys.path.append('..')
 
-import pygame
 from easy_pygame.EVENT import *
 import easy_pygame
-import copy
+
 
 def Add(pos1,pos2):
     x1,y1=pos1
@@ -245,7 +244,7 @@ def run(screen,wujiang=None,caidan=None):
     """
 
     print 'loading'
-    db=sgdata.SGDatabase('董卓弄权')
+    db= sgdata.SGDatabase('董卓弄权')
     print 'ok'
 
     game=easy_pygame.GameFrame()

@@ -3,17 +3,16 @@
 '''
 JJDL.三国 大地图模块
 '''
-SRC_WORLD='../src/wd.png'
+from __future__ import unicode_literals
+SRC_WORLD='src/wd.png'
 
-import pygame
-from sys import exit
-
+import sys
 from sgdata import SGDatabase #三国数据库
 from easy_pygame.EVENT import *
 import easy_pygame
 
-from gui_chengchi import ChengChiInfo
-from gui_chengchi_menu import ChengchiMenu
+from gui.gui_chengchi import ChengChiInfo
+from gui.gui_chengchi_menu import ChengchiMenu
 #---------------------
 def Add(pos1,pos2):
     x1,y1=pos1
@@ -103,11 +102,11 @@ class Load:
     def __init__(self,screen):
         self.screen=screen
         self.y=0
-        self.font=pygame.font.Font('../wqy-zenhei.ttc',18)
+        self.font=pygame.font.Font('wqy-zenhei.ttc',18)
         screen.fill((0,0,0))
 
     def load(self,text):
-        text=self.font.render(unicode(text,'utf8'),True,(0,255,0))
+        text=self.font.render('utf8',True,(0,255,0))
         self.screen.blit(text,(0,self.y))
         pygame.display.update()
         self.y+=20
@@ -128,6 +127,9 @@ def run(screen,guanka,myshili):
     game.MainLoop()
 
 if __name__=='__main__':
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
+
     XWIDTH,XHEIGHT=800,560
 
     pygame.init()
