@@ -2,13 +2,13 @@
 from EVENT import *
 import pygame
 
-class GameObject:
+class GameObject(object):
     ''' 游戏部件基类
     '''
 
     def __init__(self):
-        self.KILL=False #自杀事件,当KILL==True时,frame会删除此部件
-        self.frame=None #游戏框架
+        self.KILL = False  # 自杀事件,当KILL==True时,frame会删除此部件
+        self.frame = None  # 游戏框架
         
 
     def __del__(self):
@@ -34,7 +34,7 @@ class GameObject:
         ''' 想框架中添加新部件'''
         self.frame.Add(gameObj)
     
-class GameFrame:
+class GameFrame(object):
     ''' 游戏框架 '''
     
 
@@ -64,27 +64,29 @@ class GameFrame:
             self.__object.remove(gameObj)
 
     def Quit(self):
-        ''' 退出循环 '''
-        self.__loop=False
+        """ 退出循环 """
+        self.__loop = False
 
     def MainLoop(self):
-        ''' 框架主循环,游戏从这里开始'''
+        """ 框架主循环,游戏从这里开始"""
         print "In MainLoop",self
         while self.__loop:
 
-            #处理事件
+            # 处理事件
             for event in pygame.event.get():
                 for obj in self.__object[::-1]:
-                    if obj.KILL:#移除自杀组件
+                    if obj.KILL:
+                        # 移除自杀组件
                         self.__object.remove(obj)
 
-                    if obj.Event(event):#组件事件处理
+                    if obj.Event(event):
+                        # 组件事件处理
                         break
 
-            #显示
+            # 显示
             for obj in self.__object:
                 obj.Show()
 
             pygame.display.update()
 
-#-------------------------------------------------
+
