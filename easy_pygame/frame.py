@@ -69,7 +69,7 @@ class GameFrame(object):
 
     def MainLoop(self):
         """ 框架主循环,游戏从这里开始"""
-        print "In MainLoop",self
+        print("In MainLoop",self)
         while self.__loop:
 
             # 处理事件
@@ -82,6 +82,9 @@ class GameFrame(object):
                     if obj.Event(event):
                         # 组件事件处理
                         break
+
+                if event.type == pygame.QUIT:
+                    exit()
 
             # 显示
             for obj in self.__object:

@@ -124,7 +124,7 @@ class SGMap(easy_pygame.GameObject):
 
             res.append(_row)
         easy_pygame.utils.save_json_file("_last_map_.map", res)
-        print res
+        print(res)
 
 
 class ToolBar(easy_pygame.GameObject):
