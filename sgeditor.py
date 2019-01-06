@@ -123,7 +123,11 @@ class SGMap(easy_pygame.GameObject):
                     _row.append([mblock['dshow'], mblock['dtype']])
 
             res.append(_row)
-        easy_pygame.utils.save_json_file("_last_map_.map", res)
+        cfg = {
+            'shape': (self.rows, self.cols),
+            'blocks': res,
+        }
+        easy_pygame.utils.save_json_file("_last_map_.map", cfg)
         print(res)
 
 
@@ -199,26 +203,18 @@ class ToolBar(easy_pygame.GameObject):
         return j , i
 
 
-class SaveButton(easy_pygame.Button):
+class SaveButton(easy_pygame.TextButton):
     def __init__(self, screen, sgmap):
-        font = pygame.font.Font('wqy-zenhei.ttc', 24)
-        sss = font.render("保存", True, (0, 255, 0))
-        super(SaveButton, self).__init__(
-            screen,
-            (screen.get_width()-sss.get_width(), screen.get_height()-sss.get_height()), sss)
+        super(SaveButton, self).__init__(screen, "保存", (-1, -1))
         self.sgmap = sgmap
 
     def Click(self):
         self.sgmap.Save()
 
 
-class RandomMapButton(easy_pygame.Button):
+class RandomMapButton(easy_pygame.TextButton):
     def __init__(self, screen, sgmap, toolbar):
-        font = pygame.font.Font('wqy-zenhei.ttc', 24)
-        sss = font.render("生成随机地图", True, (0, 255, 0))
-        super(RandomMapButton, self).__init__(
-            screen,
-            (screen.get_width()-sss.get_width(), screen.get_height()-sss.get_height()*2), sss)
+        super(RandomMapButton, self).__init__(screen, "生成随机地图", (-1, -50))
         self.sgmap = sgmap
         self.toolbar = toolbar
 
@@ -232,7 +228,7 @@ class RandomMapButton(easy_pygame.Button):
 
 
 def run(screen):
-    print 'loading'
+    print('loading')
 
     app = easy_pygame.GameFrame()
 

@@ -6,11 +6,22 @@ from easy_pygame import _
 import time
 
 
+class Background(easy_pygame.GameObject):
+    def __init__(self, screen):
+        super(Background, self).__init__()
+        self.screen = screen
+        cfg = easy_pygame.utils.load_json_file("_last_map_.map")
+        print(cfg)
+
+    def Show(self):
+        self.screen.fill((0, 0, 0))
+
+
 class NPC(easy_pygame.GameObject):
-    def __init__(self, screen, x=0, y=0):
+    def __init__(self, screen, x=0, y=0, pos=(0, 0)):
         easy_pygame.GameObject.__init__(self)
         self.screen = screen
-        self.pos = (100, 100)
+        self.pos = pos
         image = easy_pygame.LoadImg("src/rw.png")
         self.images = []
         for j in range(4):
@@ -34,8 +45,7 @@ class NPC(easy_pygame.GameObject):
                 self.step *= -1
             self.t0 = t1
 
-        self.screen.fill((0,0,0))
-        self.screen.blit(self.images[self.idx][self.current], (0, 0))
+        self.screen.blit(self.images[self.idx][self.current], self.pos)
 
         pass
 
@@ -43,10 +53,12 @@ def run(screen):
     print('loading')
 
     app = easy_pygame.GameFrame()
+    app.Add(Background(screen))
 
     npc1 = NPC(screen)
     app.Add(npc1)
 
+    app.Add(NPC(screen, 32*3, 0, (80, 0)))
 
     app.MainLoop()
 
