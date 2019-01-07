@@ -12,8 +12,8 @@ class Background(easy_pygame.GameObject):
         src_cfg = easy_pygame.utils.load_json_file("map/config")
         self.source = {}
 
-        for i in range(len(src_cfg)):
-            dshow, dtype = src_cfg[i]
+        for i in range(len(src_cfg['src'])):
+            dshow, dtype = src_cfg['src'][i]
             self.source[dshow] = {
                 'surface': easy_pygame.LoadImg("map/src/%s.png" % dshow),
                 'type': dtype,
@@ -105,6 +105,7 @@ class NPC(easy_pygame.GameObject):
         self.step = 1
         self.j = row
         self.i = col
+        self.show_go = False
 
     def Show(self):
         t1 = time.time()
@@ -116,8 +117,19 @@ class NPC(easy_pygame.GameObject):
             self.t0 = t1
 
         self.screen.blit(self.images[self.idx][self.current], self.bg.ji2xy(self.j, self.i))
-
+        if self.show_go:
+            for _j, _i in [[0, 1], [0, 2], [0, 3]]:
+                x, y = self.bg.ji2xy(_j+self.j, _i+self.i)
+                pygame.draw.rect(self.screen, (0, 255, 0), (x, y, 80, 80), 2)
         pass
+
+    def Event(self, event):
+        if EVENT(event) == MOUSE_LEFT_DOWN:
+            x, y = event.pos
+            px, py = self.bg.ji2xy(self.j, self.i)
+            if px < x < px+64 and py < y < px+64:
+                self.show_go = True
+                return True
 
 def run(screen):
     print('loading')
