@@ -40,6 +40,8 @@ class SGMap(easy_pygame.GameObject):
 
         :param screen:
         """
+        self.font = pygame.font.Font('wqy-zenhei.ttc', 16)
+
         easy_pygame.GameObject.__init__(self)
         self.cols = 20
         self.rows = 20
@@ -49,10 +51,17 @@ class SGMap(easy_pygame.GameObject):
 
         self.pos = (0, 0)
         self.screen = screen
-        grid = pygame.Surface((self.width, self.width))
+        grid = pygame.Surface((self.width+1, self.height+1))
         grid.fill((0, 0, 0))
         grid.set_colorkey((0, 0, 0))
+
+        for j in range(self.rows+1):
+            pygame.draw.line(grid, (255, 255, 255), (0, j*80), (self.width, j*80))
+
+        for i in range(self.cols+1):
+            pygame.draw.line(grid, (255, 255, 255), (i * 80, 0), (i * 80, self.height))
         self.grid = grid
+
         self.surface = pygame.Surface((self.width, self.width))
         self.surface.fill((0, 0, 0))
 
@@ -61,6 +70,9 @@ class SGMap(easy_pygame.GameObject):
             _row = []
             for i in range(self.cols):
                 _row.append(None)
+                s = self.font.render("%s,%s" % (j, i), True, (255, 255, 255))
+                grid.blit(s, (80*i, 80*j))
+
             self.blocks.append(_row)
 
         self.selected = None
@@ -78,7 +90,8 @@ class SGMap(easy_pygame.GameObject):
             self.screen.blit(surface, self.pos)
         else:
             self.screen.blit(self.surface, self.pos)
-        easy_pygame.GameObject.Show(self)
+
+        self.screen.blit(self.grid, self.pos)
 
     def isin(self, pos):
         x, y = pos
@@ -145,7 +158,7 @@ class ToolBar(easy_pygame.GameObject):
 
         self.screen = screen
         src_cfg = easy_pygame.utils.load_json_file("map/config")
-        self.src_length = len(src_cfg)
+        self.src_length = len(src_cfg["src"])
         self.src_list = []
         self.cols = 2
         self.rows = int(math.ceil(self.src_length/2.0))
@@ -159,7 +172,7 @@ class ToolBar(easy_pygame.GameObject):
 
                 print(y, x, i, self.idx2ji(i))
 
-                dshow, dtype = src_cfg[i]
+                dshow, dtype = src_cfg["src"][i]
                 img = easy_pygame.LoadImg("map/src/%s.png" % dshow)
                 self.surface.blit(img, (80*x, 80*y))
                 mblock = {
@@ -168,7 +181,7 @@ class ToolBar(easy_pygame.GameObject):
                     'dshow': dshow,
                 }
                 _row.append(mblock)
-                if  dtype == 0:
+                if dtype == 0:
                     self.d0 = mblock
 
             self.src_list.append(_row)
@@ -199,8 +212,8 @@ class ToolBar(easy_pygame.GameObject):
         return False
 
     def idx2ji(self, idx):
-        j, i = int(idx/2), int(idx%2)
-        return j , i
+        j, i = int(idx/2), int(idx % 2)
+        return j, i
 
 
 class SaveButton(easy_pygame.TextButton):
@@ -223,8 +236,10 @@ class RandomMapButton(easy_pygame.TextButton):
             for mi in range(self.sgmap.cols):
                 idx = random.randint(1, self.toolbar.src_length-1)
                 j, i = self.toolbar.idx2ji(idx)
+                print(mj, mi, j, i)
                 self.sgmap.SetBlock(mj, mi, self.toolbar.src_list[j][i])
 
+        self.sgmap.SetBlock(int(self.sgmap.rows/2), int(self.sgmap.cols/2), self.toolbar.d0)
 
 
 def run(screen):

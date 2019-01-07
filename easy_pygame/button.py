@@ -93,6 +93,8 @@ class TextButton(Button):
                 self.hover = True
                 return True
 
+        return super(TextButton, self).Event(event)
+
     def Show(self):
         self.screen.blit(self.button, self.pos)
         if self.hover:
