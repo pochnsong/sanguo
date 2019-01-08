@@ -169,6 +169,8 @@ class ToolBar(easy_pygame.GameObject):
             _row = []
             for x in range(self.cols):
                 i = y*2+x
+                if i > self.src_length-1:
+                    break
 
                 print(y, x, i, self.idx2ji(i))
 

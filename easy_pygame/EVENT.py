@@ -49,3 +49,13 @@ def EVENT(event):
 
     elif event.type==pygame.QUIT:
         return FRAME_QUIT
+
+
+def CHANGE(event, offset_x=0, offset_y=0):
+
+    if "pos" in event.dict:
+        edict = event.dict.copy()
+        x, y = edict['pos']
+        edict["pos"] = (x+offset_x, 0+offset_y)
+        return pygame.event.Event(event.type, edict)
+    print event

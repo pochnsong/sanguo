@@ -46,17 +46,29 @@ class GameFrame(object):
         print('__loop:',self.__loop)
 
     def __init__(self):
-        self.__object = []
         self.__loop = True
+        self.__object = []
+        self.__name_group = {}
 
-    def Add(self, gameObj):
+    def Add(self, gameObj, name=None):
         """ Add GameObject"""
         if isinstance(gameObj,GameObject):
             self.__object.append(gameObj)
             gameObj.frame = self
             gameObj.Update()
+            if name is not None:
+                objs = self.__name_group.get(name, [])
+                objs.append(gameObj)
+                self.__name_group[name] = objs
+
         else:
             raise ValueError
+
+
+    def Call(self, name, fn, *args, **kwargs):
+        for obj in self.__name_group.get(name, []):
+            getattr(obj, fn)(*args, **kwargs)
+
 
     def Kill(self, gameObj):
         """ 移除 gameObj部件"""

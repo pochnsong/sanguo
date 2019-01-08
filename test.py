@@ -105,9 +105,18 @@ class NPC(easy_pygame.GameObject):
         self.step = 1
         self.j = row
         self.i = col
-        self.show_go = False
+        self.show_steps = False
+        self.surface = self.images[self.idx][self.current]
 
-    def Show(self):
+    def get_steps(self):
+        n = 2
+        pos = []
+        for j in range(-n, n + 1):
+            for i in range(abs(j) - n, n - abs(j) + 1):
+                pos.append([j+self.j, i+self.i])
+        return pos
+
+    def update(self):
         t1 = time.time()
         if t1 - self.t0 >= 0.5:
             self.current += self.step
@@ -116,39 +125,54 @@ class NPC(easy_pygame.GameObject):
                 self.step *= -1
             self.t0 = t1
 
-        self.screen.blit(self.images[self.idx][self.current], self.bg.ji2xy(self.j, self.i))
-        if self.show_go:
-            for _j, _i in [[0, 1], [0, 2], [0, 3]]:
-                x, y = self.bg.ji2xy(_j+self.j, _i+self.i)
+        self.surface = self.images[self.idx][self.current]
+
+    def Show(self):
+        self.update()
+
+        self.screen.blit(self.surface, self.bg.ji2xy(self.j, self.i))
+        if self.show_steps:
+            for j, i in self.get_steps():
+                x, y = self.bg.ji2xy(j, i)
                 pygame.draw.rect(self.screen, (0, 255, 0), (x, y, 80, 80), 2)
         pass
+
+    def clean(self):
+        self.show_steps = False
 
     def Event(self, event):
         if EVENT(event) == MOUSE_LEFT_DOWN:
             x, y = event.pos
-            px, py = self.bg.ji2xy(self.j, self.i)
-            if px < x < px+64 and py < y < px+64:
-                self.show_go = True
+            j, i = self.bg.xy2ji(x, y)
+            if j == self.j and i == self.i:
+                self.frame.Call("npc", "clean")
+                self.show_steps = True
                 return True
+
+            if self.show_steps and [j, i] in self.get_steps():
+                self.j = j
+                self.i = i
+                self.frame.Call("npc", "clean")
+                return True
+
 
 def run(screen):
     print('loading')
-
+    # pygame.event.Event()
     app = easy_pygame.GameFrame()
     bg = Background(screen)
     app.Add(bg)
 
-    npc1 = NPC(screen, 0, 0, bg, 0, 0)
-    app.Add(npc1)
+    npc1 = NPC(screen, 0, 0, bg, 3, 3)
+    app.Add(npc1, name='npc')
 
-    app.Add(NPC(screen, 32*3, 0, bg, 1, 1))
+    app.Add(NPC(screen, 32*3, 0, bg, 5, 5), name="npc")
 
     app.MainLoop()
 
 
 if __name__ == '__main__':
     XWIDTH, XHEIGHT = 1280, 560
-
     pygame.init()
     screen = pygame.display.set_mode((XWIDTH, XHEIGHT), 0, 32)
     pygame.display.set_caption(_("JJDL.三国-地图编辑器v0.1"))
